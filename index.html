@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Controle de Patrimônio - Comebom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --bg-card: #ffffff;
+      --primary: #c8102e;
+      --primary-soft: #ffe6ea;
+      --border: #d4d4d8;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --danger: #dc2626;
+      --radius-lg: 14px;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #ffe6ea 0, #f5f7fb 40%, #f5f7fb 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    /* ---------- TELA DE LOGIN / CADASTRO ---------- */
+
+    .auth-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 400px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 15px 40px rgba(15, 23, 42, 0.25);
+      padding: 20px 22px 22px;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .auth-header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .auth-header p {
+      margin: 4px 0 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: #f3f4f6;
+      border-radius: 999px;
+      padding: 2px;
+      margin-bottom: 14px;
+      gap: 2px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      padding: 6px 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 500;
+      transition: 0.15s ease;
+    }
+
+    .auth-tab.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .auth-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.85rem;
+    }
+
+    .auth-group label span.required {
+      color: var(--danger);
+    }
+
+    .auth-group input {
+      padding: 7px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      outline: none;
+      background: #f9fafb;
+      transition: 0.12s ease;
+    }
+
+    .auth-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(200, 16, 46, 0.15);
+      background: #ffffff;
+    }
+
+    .auth-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .auth-btn {
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      background: var(--primary);
+      color: #ffffff;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(200, 16, 46, 0.35);
+      transition: 0.15s ease;
+    }
+
+    .auth-btn:hover {
+      filter: brightness(1.05);
+    }
+
+    .auth-alert {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--danger);
+      display: none;
+    }
+
+    /* ---------- APP ORIGINAL ---------- */
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px 32px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      letter-spacing: 0.02em;
+    }
+
+    .title-block p {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(200, 16, 46, 0.08);
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+    }
+
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-right {
+        align-items: flex-start;
+      }
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.15s ease;
+    }
+
+    .tab-btn span.icon {
+      font-size: 1.1rem;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(200, 16, 46, 0.35);
+    }
+
+    .tab-btn:not(.active):hover {
+      background: rgba(148, 163, 184, 0.12);
+      border-color: rgba(148, 163, 184, 0.5);
+      color: #111827;
+    }
+
+    /* Layout */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+
+    .layout-two {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+
+    @media (max-width: 900px) {
+      .layout-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .card-header p {
+      margin: 2px 0 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.85rem;
+    }
+
+    label span.required {
+      color: var(--danger);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      outline: none;
+      background: #f9fafb;
+      transition: 0.12s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(200, 16, 46, 0.12);
+      background: #ffffff;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    input[readonly],
+    textarea[readonly] {
+      background: #f3f4f6;
+      color: var(--text-muted);
+    }
+
+    .field-inline-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      border: 1px solid transparent;
+      background: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 5px 15px rgba(200, 16, 46, 0.35);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-danger {
+      background: rgba(220, 38, 38, 0.06);
+      color: var(--danger);
+      border-color: rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 0.75rem;
+    }
+
+    /* Tables */
+    .table-wrapper {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    thead {
+      background: #f3f4f6;
+    }
+
+    th,
+    td {
+      padding: 8px 8px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      font-weight: 600;
+      color: #4b5563;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tbody tr {
+      cursor: pointer;
+      transition: 0.12s ease;
+    }
+
+    tbody tr:hover {
+      background: #fee2e2;
+    }
+
+    tr.selected {
+      background: var(--primary-soft);
+    }
+
+    .pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .pill-uso {
+      background: rgba(34, 197, 94, 0.1);
+      color: #15803d;
+    }
+
+    .pill-baixado {
+      background: rgba(220, 38, 38, 0.08);
+      color: #b91c1c;
+    }
+
+    .pill-outros {
+      background: rgba(249, 115, 22, 0.1);
+      color: #c2410c;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-row input {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .tag-muted {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Modal de detalhes do bem */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 16px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: auto;
+      padding: 16px 20px 18px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.4);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .modal-body {
+      font-size: 0.85rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 16px;
+    }
+
+    @media (max-width: 700px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-item strong {
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+    }
+
+    .detail-item span {
+      font-size: 0.86rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- TELA DE LOGIN / CADASTRO -->
+  <div id="auth-shell" class="auth-shell">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Comebom Distribuidora</h1>
+        <p>Controle de Patrimônio · Acesso</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth-tab="login">Entrar</button>
+        <button class="auth-tab" data-auth-tab="register">Cadastrar</button>
+      </div>
+
+      <div id="auth-alert" class="auth-alert"></div>
+
+      <!-- LOGIN -->
+      <form id="loginForm" class="auth-form">
+        <div class="auth-group">
+          <label for="loginEmail">E-mail <span class="required">*</span></label>
+          <input type="email" id="loginEmail" required />
+        </div>
+        <div class="auth-group">
+          <label for="loginPassword">Senha <span class="required">*</span></label>
+          <input type="password" id="loginPassword" required />
+        </div>
+        <div class="auth-hint">
+          Os usuários são salvos na planilha do Google Sheets (API).
+        </div>
+        <button type="submit" class="auth-btn">Entrar</button>
+      </form>
+
+      <!-- CADASTRO -->
+      <form id="registerForm" class="auth-form" style="display:none;">
+        <div class="auth-group">
+          <label for="regName">Nome <span class="required">*</span></label>
+          <input type="text" id="regName" required />
+        </div>
+        <div class="auth-group">
+          <label for="regEmail">E-mail <span class="required">*</span></label>
+          <input type="email" id="regEmail" required />
+        </div>
+        <div class="auth-group">
+          <label for="regPassword">Senha <span class="required">*</span></label>
+          <input type="password" id="regPassword" required />
+        </div>
+        <div class="auth-group">
+          <label for="regPassword2">Confirmar senha <span class="required">*</span></label>
+          <input type="password" id="regPassword2" required />
+        </div>
+        <div class="auth-hint">
+          As credenciais ficam centralizadas na planilha (vários computadores podem usar).
+        </div>
+        <button type="submit" class="auth-btn">Criar conta e entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP PRINCIPAL (FICA ESCONDIDO ATÉ LOGAR) -->
+  <div id="main-app" style="display:none;">
+    <div class="app-shell">
+      <header>
+        <div class="title-block">
+          <h1>Controle de Patrimônio</h1>
+          <p>Sistema web conectado à planilha do Google Sheets.</p>
+        </div>
+        <div class="header-right">
+          <div style="font-weight:700; font-size:1rem; text-align:right;">
+            Comebom Distribuidora
+          </div>
+          <div style="font-size:0.78rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+            Usuário: <span id="currentUserLabel">-</span>
+            <button id="btnLogout" class="btn btn-ghost btn-sm" type="button">Sair</button>
+          </div>
+          <div class="badge">
+            <span class="badge-dot"></span>
+            Dados centralizados via Google Sheets
+          </div>
+        </div>
+      </header>
+
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="tab-bens">
+          <span class="icon">📦</span>
+          Bens patrimoniais
+        </button>
+        <button class="tab-btn" data-tab="tab-mov">
+          <span class="icon">🔁</span>
+          Movimentações
+        </button>
+        <button class="tab-btn" data-tab="tab-inv">
+          <span class="icon">📋</span>
+          Inventário físico
+        </button>
+      </nav>
+
+      <!-- TAB BENS -->
+      <section id="tab-bens" class="tab-content">
+        <div class="layout-two">
+          <!-- Lista de bens -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2>Bens cadastrados</h2>
+                <p>Selecione um bem para editar ou clique em “Novo bem”.</p>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-ghost" id="btnExportBens">⬇️ Exportar CSV/Excel</button>
+              </div>
+            </div>
+
+            <div class="search-row">
+              <input type="text" id="searchBem" placeholder="Buscar por descrição, setor ou responsável..." />
+              <button class="btn btn-ghost" id="btnNovoBem">Novo bem</button>
+            </div>
+
+            <div class="table-wrapper" style="max-height: 380px; overflow: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Setor</th>
+                    <th>Responsável</th>
+                    <th>Situação</th>
+                    <th>Valor atual</th>
+                  </tr>
+                </thead>
+                <tbody id="bensTableBody">
+                  <!-- preenchido via JS -->
+                </tbody>
+              </table>
+            </div>
+            <p class="hint">Valores e depreciação são calculados automaticamente a partir da data de uso e vida útil.</p>
+          </div>
+
+          <!-- Form de bens -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2>Cadastro / edição de bem</h2>
+                <p>Preencha os campos abaixo e clique em “Salvar bem”.</p>
+              </div>
+              <div class="tag-muted" id="bemFormStatus">Novo bem</div>
+            </div>
+
+            <form id="bemForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="idBem">ID do bem</label>
+                  <input type="text" id="idBem" name="idBem" readonly />
+                  <div class="field-inline-note">Gerado automaticamente (PAT-0001, PAT-0002...).</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="descricaoBem">Descrição <span class="required">*</span></label>
+                  <input type="text" id="descricaoBem" name="descricaoBem" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="categoriaBem">Categoria</label>
+                  <select id="categoriaBem" name="categoriaBem">
+                    <option value="">Selecione...</option>
+                    <option>Informática</option>
+                    <option>Móveis</option>
+                    <option>Veículos</option>
+                    <option>Equipamentos</option>
+                    <option>Logística</option>
+                    <option>Outros</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="numSerieBem">Nº de série</label>
+                  <input type="text" id="numSerieBem" name="numSerieBem" />
+                </div>
+
+                <div class="form-group">
+                  <label for="tagBem">Tag patrimonial</label>
+                  <input type="text" id="tagBem" name="tagBem" />
+                  <div class="field-inline-note">Código que será colado fisicamente no bem.</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="setorBem">Setor / centro de custo</label>
+                  <input type="text" id="setorBem" name="setorBem" placeholder="Ex.: ADM, Depósito, Comercial" />
+                </div>
+
+                <div class="form-group">
+                  <label for="localizacaoBem">Localização detalhada</label>
+                  <input type="text" id="localizacaoBem" name="localizacaoBem" placeholder="Ex.: Depósito – Rua 3 – Box 7" />
+                </div>
+
+                <div class="form-group">
+                  <label for="responsavelBem">Responsável atual</label>
+                  <input type="text" id="responsavelBem" name="responsavelBem" />
+                </div>
+
+                <div class="form-group">
+                  <label for="dataAquisicaoBem">Data de aquisição</label>
+                  <input type="date" id="dataAquisicaoBem" name="dataAquisicaoBem" />
+                </div>
+
+                <div class="form-group">
+                  <label for="valorAquisicaoBem">Valor de aquisição (R$)</label>
+                  <input type="number" step="0.01" id="valorAquisicaoBem" name="valorAquisicaoBem" />
+                </div>
+
+                <div class="form-group">
+                  <label for="vidaUtilBem">Vida útil (meses)</label>
+                  <input type="number" id="vidaUtilBem" name="vidaUtilBem" placeholder="Ex.: 60" />
+                </div>
+
+                <div class="form-group">
+                  <label for="metodoDepBem">Método de depreciação</label>
+                  <select id="metodoDepBem" name="metodoDepBem">
+                    <option value="">Selecione...</option>
+                    <option value="Linear">Linear</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="dataInicioUsoBem">Data início de uso</label>
+                  <input type="date" id="dataInicioUsoBem" name="dataInicioUsoBem" />
+                </div>
+
+                <div class="form-group">
+                  <label for="situacaoBem">Situação atual</label>
+                  <select id="situacaoBem" name="situacaoBem">
+                    <option value="Em uso">Em uso</option>
+                    <option value="Em manutenção">Em manutenção</option>
+                    <option value="Emprestado">Emprestado</option>
+                    <option value="Parado">Parado</option>
+                    <option value="Baixado">Baixado</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="motivoBaixaBem">Motivo da baixa</label>
+                  <input type="text" id="motivoBaixaBem" name="motivoBaixaBem" placeholder="Preencher apenas se baixado" />
+                </div>
+
+                <div class="form-group">
+                  <label for="depMensalBem">Depreciação mensal (R$)</label>
+                  <input type="text" id="depMensalBem" readonly />
+                </div>
+
+                <div class="form-group">
+                  <label for="mesesUsoBem">Meses de uso</label>
+                  <input type="text" id="mesesUsoBem" readonly />
+                </div>
+
+                <div class="form-group">
+                  <label for="depAcumBem">Depreciação acumulada (R$)</label>
+                  <input type="text" id="depAcumBem" readonly />
+                </div>
+
+                <div class="form-group">
+                  <label for="valorAtualBem">Valor atual estimado (R$)</label>
+                  <input type="text" id="valorAtualBem" readonly />
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+                  <label for="obsBem">Observações</label>
+                  <textarea id="obsBem" name="obsBem" rows="2"></textarea>
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn btn-danger" id="btnExcluirBem">Excluir</button>
+                <button type="button" class="btn btn-ghost" id="btnLimparBem">Limpar</button>
+                <button type="button" class="btn btn-ghost" id="btnTermoBem">📝 Termo responsabilidade</button>
+                <button type="submit" class="btn btn-primary">
+                  💾 Salvar bem
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB MOVIMENTACOES -->
+      <section id="tab-mov" class="tab-content" style="display:none;">
+        <div class="layout-two">
+          <!-- Lista de movimentações -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2>Movimentações</h2>
+                <p>Histórico de movimentações dos bens.</p>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-ghost" id="btnExportMov">⬇️ Exportar CSV/Excel</button>
+                <button class="btn btn-ghost" id="btnTermoMov">📝 Termo responsabilidade</button>
+              </div>
+            </div>
+
+            <div class="table-wrapper" style="max-height: 380px; overflow:auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                    <th>Bem</th>
+                    <th>Tipo</th>
+                    <th>Setor origem</th>
+                    <th>Setor destino</th>
+                  </tr>
+                </thead>
+                <tbody id="movTableBody">
+                  <!-- via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Cadastro de movimentação -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2>Novo registro de movimentação</h2>
+                <p>Registre transferências, manutenções e baixas.</p>
+              </div>
+            </div>
+
+            <form id="movForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="idMov">ID da movimentação</label>
+                  <input type="text" id="idMov" readonly />
+                  <div class="field-inline-note">Gerado automaticamente (MOV-0001...).</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="dataMov">Data <span class="required">*</span></label>
+                  <input type="date" id="dataMov" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="bemMov">Bem <span class="required">*</span></label>
+                  <select id="bemMov" required>
+                    <option value="">Selecione um bem...</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="tipoMov">Tipo de movimentação</label>
+                  <select id="tipoMov">
+                    <option>Transferência de setor</option>
+                    <option>Transferência de responsável</option>
+                    <option>Manutenção</option>
+                    <option>Baixa - venda</option>
+                    <option>Baixa - sucata</option>
+                    <option>Ajuste</option>
+                    <option>Cadastro inicial</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="setorOrigemMov">Setor origem</label>
+                  <input type="text" id="setorOrigemMov" />
+                </div>
+
+                <div class="form-group">
+                  <label for="setorDestinoMov">Setor destino</label>
+                  <input type="text" id="setorDestinoMov" />
+                </div>
+
+                <div class="form-group">
+                  <label for="respOrigemMov">Responsável origem</label>
+                  <input type="text" id="respOrigemMov" />
+                </div>
+
+                <div class="form-group">
+                  <label for="respDestinoMov">Responsável destino</label>
+                  <input type="text" id="respDestinoMov" />
+                </div>
+
+                <div class="form-group">
+                  <label for="valorMov">Valor (se houver)</label>
+                  <input type="number" step="0.01" id="valorMov" />
+                </div>
+
+                <div class="form-group">
+                  <label for="usuarioMov">Usuário / operador</label>
+                  <input type="text" id="usuarioMov" placeholder="Quem lançou a movimentação" />
+                </div>
+
+                <div class="form-group" style="grid-column:1 / -1;">
+                  <label for="descMov">Descrição detalhada</label>
+                  <textarea id="descMov" rows="2"></textarea>
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button type="submit" class="btn btn-primary">
+                  ➕ Registrar movimentação
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB INVENTARIO -->
+      <section id="tab-inv" class="tab-content" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Inventário físico (snapshot)</h2>
+              <p>Dê um duplo clique em um bem para ver o detalhamento.</p>
+            </div>
+          </div>
+          <p class="hint">
+            O inventário abaixo espelha a situação atual dos bens cadastrados.
+          </p>
+
+          <div class="table-wrapper" style="max-height: 380px; overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bem</th>
+                  <th>Tag</th>
+                  <th>Setor</th>
+                  <th>Responsável</th>
+                  <th>Situação</th>
+                </tr>
+              </thead>
+              <tbody id="invTableBody">
+                <!-- preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- MODAL DETALHES DO BEM + HISTÓRICO -->
+  <div id="bemDetailModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Detalhes do bem</h2>
+        <button class="btn btn-ghost btn-sm" id="btnCloseBemModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="bemDetailContent"></div>
+
+        <div class="btn-row" style="justify-content:flex-start; margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" id="btnToggleRespHistory">
+            👥 Mostrar histórico de responsáveis
+          </button>
+        </div>
+
+        <div id="bemRespHistorySection" style="display:none; margin-top:8px;">
+          <h3 style="font-size:0.95rem; margin:4px 0 6px;">Histórico de responsáveis do bem</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Tipo</th>
+                  <th>Responsável origem</th>
+                  <th>Responsável destino</th>
+                  <th>Setor origem</th>
+                  <th>Setor destino</th>
+                </tr>
+              </thead>
+              <tbody id="bemRespHistoryBody">
+                <!-- via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // URL da sua API do Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycby8sNfpImn37R_IPuRkpXt-JHweeHzAGfYI9Pwkyjtmsaypm3mdn3PKuckeIlDnaMah/exec";
+
+    // ------------------------------
+    // STATE
+    // ------------------------------
+    const state = {
+      bens: [],
+      movimentacoes: []
+    };
+
+    // usuário logado salvo apenas localmente (para não pedir toda hora)
+    const AUTH_CURRENT_KEY = "patrimonio_current_user";
+
+    function getCurrentUser() {
+      try {
+        const raw = localStorage.getItem(AUTH_CURRENT_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setCurrentUser(user) {
+      localStorage.setItem(AUTH_CURRENT_KEY, JSON.stringify(user));
+    }
+
+    function clearCurrentUser() {
+      localStorage.removeItem(AUTH_CURRENT_KEY);
+    }
+
+    // ------------------------------
+    // CHAMADAS À API (GENÉRICO)
+    // ------------------------------
+    async function apiCall(action, method = "GET", data = null) {
+      let url = API_URL + "?action=" + encodeURIComponent(action);
+      const options = { method };
+
+      if (method === "GET" && data) {
+        url += "&" + new URLSearchParams(data);
+      } else if (method !== "GET" && data) {
+        options.headers = { "Content-Type": "application/json" };
+        options.body = JSON.stringify(data);
+      }
+
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        throw new Error("Erro HTTP " + resp.status);
+      }
+      const json = await resp.json();
+      return json;
+    }
+
+    // ------------------------------
+    // UTILITÁRIOS
+    // ------------------------------
+    function gerarId(prefixo, lista) {
+      let max = 0;
+      lista.forEach((item) => {
+        const id = item.id || item.idMov || "";
+        const m = String(id).match(/(\d+)$/);
+        if (m) {
+          const num = parseInt(m[1], 10);
+          if (num > max) max = num;
+        }
+      });
+      const prox = max + 1;
+      return prefixo + String(prox).padStart(4, "0");
+    }
+
+    function formatCurrencyBRL(valor) {
+      const n = Number(valor);
+      if (isNaN(n)) return "-";
+      return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function formatDateBRL(str) {
+      if (!str) return "";
+      const d = new Date(str);
+      if (isNaN(d.getTime())) return str;
+      const dia = String(d.getDate()).padStart(2, "0");
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const ano = d.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function calcularDepreciacao(bem) {
+      const valor = parseFloat(bem.valorAquisicao || 0) || 0;
+      const vida = parseInt(bem.vidaUtilMeses || 0) || 0;
+      const dataInicio = bem.dataInicioUso || bem.dataAquisicao;
+      let depMensal = 0;
+      let mesesUso = 0;
+      let depAcum = 0;
+      let valorAtual = valor;
+
+      if (valor > 0 && vida > 0) {
+        depMensal = valor / vida;
+      }
+      if (dataInicio) {
+        const inicio = new Date(dataInicio);
+        const hoje = new Date();
+        let anos = hoje.getFullYear() - inicio.getFullYear();
+        let meses = hoje.getMonth() - inicio.getMonth();
+        mesesUso = anos * 12 + meses;
+        if (mesesUso < 0) mesesUso = 0;
+      }
+      depAcum = depMensal * mesesUso;
+      if (depAcum > valor) depAcum = valor;
+      valorAtual = valor - depAcum;
+      if (valorAtual < 0) valorAtual = 0;
+
+      return {
+        depMensal,
+        mesesUso,
+        depAcum,
+        valorAtual
+      };
+    }
+
+    function situacaoToPillClass(situacao) {
+      if (situacao === "Em uso") return "pill pill-uso";
+      if (situacao === "Baixado") return "pill pill-baixado";
+      return "pill pill-outros";
+    }
+
+    // CSV helpers
+    function csvEscape(value) {
+      if (value === null || value === undefined) return "";
+      const s = String(value).replace(/"/g, '""');
+      return `"${s}"`;
+    }
+
+    function downloadCSV(filename, rows) {
+      const csvContent = rows.map(r => r.map(csvEscape).join(";")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportBensCSV() {
+      if (!state.bens.length) {
+        alert("Não há bens cadastrados para exportar.");
+        return;
+      }
+      const header = [
+        "ID_BEM","DESCRICAO","CATEGORIA","NUM_SERIE","TAG","SETOR","LOCALIZACAO",
+        "RESPONSAVEL","DATA_AQUISICAO","VALOR_AQUISICAO","VIDA_UTIL_MESES",
+        "METODO_DEPRECIACAO","DATA_INICIO_USO","SITUACAO","MOTIVO_BAIXA","OBS",
+        "DEPRECIACAO_MENSAL","MESES_USO","DEPRECIACAO_ACUMULADA","VALOR_ATUAL"
+      ];
+      const rows = [header];
+
+      state.bens.forEach(bem => {
+        const { depMensal, mesesUso, depAcum, valorAtual } = calcularDepreciacao(bem);
+        rows.push([
+          bem.id || "",
+          bem.descricao || "",
+          bem.categoria || "",
+          bem.numSerie || "",
+          bem.tag || "",
+          bem.setor || "",
+          bem.localizacao || "",
+          bem.responsavel || "",
+          bem.dataAquisicao || "",
+          bem.valorAquisicao || "",
+          bem.vidaUtilMeses || "",
+          bem.metodoDepreciacao || "",
+          bem.dataInicioUso || "",
+          bem.situacao || "",
+          bem.motivoBaixa || "",
+          bem.obs || "",
+          depMensal || 0,
+          mesesUso || 0,
+          depAcum || 0,
+          valorAtual || 0
+        ]);
+      });
+
+      downloadCSV("bens_comebom.csv", rows);
+    }
+
+    function exportMovCSV() {
+      if (!state.movimentacoes.length) {
+        alert("Não há movimentações cadastradas para exportar.");
+        return;
+      }
+      const header = [
+        "ID_MOV","DATA_MOV","ID_BEM","DESCRICAO_BEM","TIPO_MOV",
+        "SETOR_ORIGEM","SETOR_DESTINO","RESP_ORIGEM","RESP_DESTINO",
+        "VALOR","USUARIO","DESCRICAO"
+      ];
+      const rows = [header];
+
+      state.movimentacoes.forEach(mov => {
+        const bem = state.bens.find(b => b.id === mov.idBem);
+        rows.push([
+          mov.idMov || "",
+          mov.dataMov || "",
+          mov.idBem || "",
+          bem ? (bem.descricao || "") : "",
+          mov.tipoMov || "",
+          mov.setorOrigem || "",
+          mov.setorDestino || "",
+          mov.respOrigem || "",
+          mov.respDestino || "",
+          mov.valor || "",
+          mov.usuario || "",
+          mov.descricao || ""
+        ]);
+      });
+
+      downloadCSV("movimentacoes_comebom.csv", rows);
+    }
+
+    // ------------------------------
+    // TERMO DE RESPONSABILIDADE (sem valores)
+    // ------------------------------
+    function gerarTermoResponsabilidade(bem) {
+      if (!bem) {
+        alert("Nenhum bem informado.");
+        return;
+      }
+      let responsavel = (bem.responsavel || "").trim();
+      if (!responsavel) {
+        responsavel = prompt("Informe o nome do responsável para o termo:", "");
+        if (!responsavel) {
+          alert("Nome do responsável não informado.");
+          return;
+        }
+      }
+
+      const hoje = new Date();
+      const dia = String(hoje.getDate()).padStart(2, "0");
+      const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+      const ano = hoje.getFullYear();
+      const dataHojeStr = `${dia}/${mes}/${ano}`;
+
+      calcularDepreciacao(bem); // mantido caso queira usar no futuro
+
+      const win = window.open("", "_blank");
+      if (!win) {
+        alert("O navegador bloqueou a abertura da nova aba/janela. Permita pop-ups para este site.");
+        return;
+      }
+
+      const html = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Termo de Responsabilidade - ${bem.id || ""}</title>
+<style>
+  body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 32px; color:#111827; }
+  .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+  .title { text-align:center; margin-bottom:24px; }
+  .title h1 { font-size:1.3rem; margin:0; text-transform:uppercase; }
+  .body-text { font-size:0.95rem; line-height:1.5; margin-bottom:18px; }
+  .bem-table { width:100%; border-collapse:collapse; margin:12px 0 20px; font-size:0.9rem; }
+  .bem-table th, .bem-table td { border:1px solid #d4d4d8; padding:6px 8px; text-align:left; }
+  .bem-table th { background:#f3f4f6; text-transform:uppercase; font-size:0.75rem; letter-spacing:0.04em; }
+  .signature-block { margin-top:40px; text-align:center; }
+  .signature-line { margin-top:40px; border-top:1px solid #000; width:260px; margin-left:auto; margin-right:auto; padding-top:4px; }
+  .meta { font-size:0.85rem; margin-top:8px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <strong>Comebom Distribuidora</strong><br/>
+      Termo de Responsabilidade por Bem Patrimonial
+    </div>
+  </div>
+
+  <div class="title">
+    <h1>TERMO DE RESPONSABILIDADE POR BEM PATRIMONIAL</h1>
+  </div>
+
+  <div class="body-text">
+    Pelo presente instrumento, eu, <strong>${responsavel}</strong>, doravante denominado(a)
+    <strong>RESPONSÁVEL</strong>, declaro para os devidos fins que recebo da
+    <strong>Comebom Distribuidora</strong> o bem patrimonial abaixo descrito, comprometendo-me a:
+  </div>
+
+  <div class="body-text">
+    a) zelar pela boa guarda, uso adequado e conservação do bem;<br/>
+    b) utilizar o bem exclusivamente para atividades vinculadas à empresa;<br/>
+    c) comunicar imediatamente à empresa qualquer dano, furto, roubo ou extravio do bem;<br/>
+    d) devolver o bem sempre que solicitado ou em caso de desligamento/realocação de função.
+  </div>
+
+  <table class="bem-table">
+    <tr><th>ID do bem</th><td>${bem.id || ""}</td></tr>
+    <tr><th>Descrição</th><td>${bem.descricao || ""}</td></tr>
+    <tr><th>Categoria</th><td>${bem.categoria || ""}</td></tr>
+    <tr><th>Tag patrimonial</th><td>${bem.tag || ""}</td></tr>
+    <tr><th>Nº de série</th><td>${bem.numSerie || ""}</td></tr>
+    <tr><th>Setor</th><td>${bem.setor || ""}</td></tr>
+    <tr><th>Localização</th><td>${bem.localizacao || ""}</td></tr>
+    <tr><th>Data de aquisição</th><td>${formatDateBRL(bem.dataAquisicao || "")}</td></tr>
+    <tr><th>Data início de uso</th><td>${formatDateBRL(bem.dataInicioUso || "")}</td></tr>
+  </table>
+
+  <div class="body-text">
+    Declaro estar ciente de que a não observância das responsabilidades acima poderá implicar em
+    medidas administrativas e/ou ressarcimento à empresa, conforme avaliação interna.
+  </div>
+
+  <div class="meta">
+    Local e data: ____________________________, ${dataHojeStr}
+  </div>
+
+  <div class="signature-block">
+    <div class="signature-line">${responsavel}</div>
+    <div style="font-size:0.85rem;">Responsável pelo bem patrimonial</div>
+  </div>
+</body>
+</html>
+      `;
+
+      win.document.write(html);
+      win.document.close();
+      win.focus();
+    }
+
+    // ------------------------------
+    // RENDERIZAÇÃO - BENS
+    // ------------------------------
+    const bensTableBody = document.getElementById("bensTableBody");
+    const searchBemInput = document.getElementById("searchBem");
+    const bemFormStatus = document.getElementById("bemFormStatus");
+
+    function renderBensTable() {
+      const filtro = (searchBemInput.value || "").toLowerCase();
+      bensTableBody.innerHTML = "";
+
+      state.bens.forEach((bem) => {
+        const { valorAtual } = calcularDepreciacao(bem);
+        const textoBusca =
+          (bem.descricao || "") +
+          " " +
+          (bem.setor || "") +
+          " " +
+          (bem.responsavel || "");
+        if (filtro && !textoBusca.toLowerCase().includes(filtro)) return;
+
+        const tr = document.createElement("tr");
+        tr.dataset.idBem = bem.id;
+
+        tr.innerHTML = `
+          <td>${bem.id}</td>
+          <td>${bem.descricao || ""}</td>
+          <td>${bem.categoria || ""}</td>
+          <td>${bem.setor || ""}</td>
+          <td>${bem.responsavel || ""}</td>
+          <td><span class="${situacaoToPillClass(bem.situacao || "")}">
+              ${bem.situacao || ""}
+          </span></td>
+          <td>${formatCurrencyBRL(valorAtual)}</td>
+        `;
+
+        tr.addEventListener("click", () => {
+          document.querySelectorAll("#bensTableBody tr").forEach((row) => row.classList.remove("selected"));
+          tr.classList.add("selected");
+          preencherFormBem(bem);
+        });
+
+        bensTableBody.appendChild(tr);
+      });
+    }
+
+    function preencherFormBem(bem) {
+      document.getElementById("idBem").value = bem.id || "";
+      document.getElementById("descricaoBem").value = bem.descricao || "";
+      document.getElementById("categoriaBem").value = bem.categoria || "";
+      document.getElementById("numSerieBem").value = bem.numSerie || "";
+      document.getElementById("tagBem").value = bem.tag || "";
+      document.getElementById("setorBem").value = bem.setor || "";
+      document.getElementById("localizacaoBem").value = bem.localizacao || "";
+      document.getElementById("responsavelBem").value = bem.responsavel || "";
+      document.getElementById("dataAquisicaoBem").value = bem.dataAquisicao || "";
+      document.getElementById("valorAquisicaoBem").value = bem.valorAquisicao || "";
+      document.getElementById("vidaUtilBem").value = bem.vidaUtilMeses || "";
+      document.getElementById("metodoDepBem").value = bem.metodoDepreciacao || "";
+      document.getElementById("dataInicioUsoBem").value = bem.dataInicioUso || "";
+      document.getElementById("situacaoBem").value = bem.situacao || "Em uso";
+      document.getElementById("motivoBaixaBem").value = bem.motivoBaixa || "";
+      document.getElementById("obsBem").value = bem.obs || "";
+
+      const { depMensal, mesesUso, depAcum, valorAtual } = calcularDepreciacao(bem);
+      document.getElementById("depMensalBem").value = formatCurrencyBRL(depMensal);
+      document.getElementById("mesesUsoBem").value = mesesUso || 0;
+      document.getElementById("depAcumBem").value = formatCurrencyBRL(depAcum);
+      document.getElementById("valorAtualBem").value = formatCurrencyBRL(valorAtual);
+
+      bemFormStatus.textContent = "Editando " + (bem.id || "");
+    }
+
+    function limparFormBem() {
+      document.getElementById("bemForm").reset();
+      document.getElementById("idBem").value = "";
+      document.getElementById("depMensalBem").value = "";
+      document.getElementById("mesesUsoBem").value = "";
+      document.getElementById("depAcumBem").value = "";
+      document.getElementById("valorAtualBem").value = "";
+      bemFormStatus.textContent = "Novo bem";
+      document.querySelectorAll("#bensTableBody tr").forEach((row) => row.classList.remove("selected"));
+    }
+
+    function lerBemDoForm() {
+      const current = getCurrentUser();
+      return {
+        id: document.getElementById("idBem").value || null,
+        descricao: document.getElementById("descricaoBem").value || "",
+        categoria: document.getElementById("categoriaBem").value || "",
+        numSerie: document.getElementById("numSerieBem").value || "",
+        tag: document.getElementById("tagBem").value || "",
+        setor: document.getElementById("setorBem").value || "",
+        localizacao: document.getElementById("localizacaoBem").value || "",
+        responsavel: document.getElementById("responsavelBem").value || "",
+        dataAquisicao: document.getElementById("dataAquisicaoBem").value || "",
+        valorAquisicao: document.getElementById("valorAquisicaoBem").value || "",
+        vidaUtilMeses: document.getElementById("vidaUtilBem").value || "",
+        metodoDepreciacao: document.getElementById("metodoDepBem").value || "",
+        dataInicioUso: document.getElementById("dataInicioUsoBem").value || "",
+        situacao: document.getElementById("situacaoBem").value || "Em uso",
+        motivoBaixa: document.getElementById("motivoBaixaBem").value || "",
+        obs: document.getElementById("obsBem").value || "",
+        criado_por: current ? (current.email || current.id || "") : ""
+      };
+    }
+
+    // ------------------------------
+    // RENDERIZAÇÃO - MOVIMENTAÇÕES
+    // ------------------------------
+    const movTableBody = document.getElementById("movTableBody");
+    let selectedMovId = null;
+    let currentBemModalId = null;
+
+    function renderMovTable() {
+      movTableBody.innerHTML = "";
+      selectedMovId = null;
+      state.movimentacoes.forEach((mov) => {
+        const bem = state.bens.find((b) => b.id === mov.idBem);
+        const tr = document.createElement("tr");
+        tr.dataset.idMov = mov.idMov;
+        tr.innerHTML = `
+          <td>${mov.idMov || ""}</td>
+          <td>${formatDateBRL(mov.dataMov || "")}</td>
+          <td>${bem ? bem.descricao : mov.idBem}</td>
+          <td>${mov.tipoMov || ""}</td>
+          <td>${mov.setorOrigem || ""}</td>
+          <td>${mov.setorDestino || ""}</td>
+        `;
+        tr.addEventListener("click", () => {
+          document.querySelectorAll("#movTableBody tr").forEach((row) => row.classList.remove("selected"));
+          tr.classList.add("selected");
+          selectedMovId = mov.idMov;
+        });
+        movTableBody.appendChild(tr);
+      });
+    }
+
+    function renderBemOptionsForMov() {
+      const select = document.getElementById("bemMov");
+      const selected = select.value;
+      select.innerHTML = '<option value="">Selecione um bem...</option>';
+      state.bens.forEach((bem) => {
+        const opt = document.createElement("option");
+        opt.value = bem.id;
+        opt.textContent = `${bem.id} - ${bem.descricao}`;
+        select.appendChild(opt);
+      });
+      if (selected) {
+        select.value = selected;
+      }
+    }
+
+    // ------------------------------
+    // RENDERIZAÇÃO - INVENTÁRIO
+    // ------------------------------
+    const invTableBody = document.getElementById("invTableBody");
+
+    function renderInventarioSnapshot() {
+      invTableBody.innerHTML = "";
+      state.bens.forEach((bem) => {
+        const tr = document.createElement("tr");
+        tr.dataset.idBem = bem.id;
+        tr.innerHTML = `
+          <td>${bem.descricao || ""}</td>
+          <td>${bem.tag || ""}</td>
+          <td>${bem.setor || ""}</td>
+          <td>${bem.responsavel || ""}</td>
+          <td><span class="${situacaoToPillClass(bem.situacao || "")}">
+              ${bem.situacao || ""}
+          </span></td>
+        `;
+        tr.addEventListener("dblclick", () => {
+          abrirModalDetalheBem(bem);
+        });
+        invTableBody.appendChild(tr);
+      });
+    }
+
+    // ------------------------------
+    // MODAL DETALHE DO BEM
+    // ------------------------------
+    const bemDetailModal = document.getElementById("bemDetailModal");
+    const bemDetailContent = document.getElementById("bemDetailContent");
+    const bemRespHistorySection = document.getElementById("bemRespHistorySection");
+    const bemRespHistoryBody = document.getElementById("bemRespHistoryBody");
+    const btnToggleRespHistory = document.getElementById("btnToggleRespHistory");
+    const btnCloseBemModal = document.getElementById("btnCloseBemModal");
+
+    function abrirModalDetalheBem(bem) {
+      currentBemModalId = bem.id;
+      const campos = [
+        ["ID do bem", bem.id],
+        ["Descrição", bem.descricao],
+        ["Categoria", bem.categoria],
+        ["Tag patrimonial", bem.tag],
+        ["Nº de série", bem.numSerie],
+        ["Setor", bem.setor],
+        ["Localização", bem.localizacao],
+        ["Responsável atual", bem.responsavel],
+        ["Data de aquisição", formatDateBRL(bem.dataAquisicao)],
+        ["Data início de uso", formatDateBRL(bem.dataInicioUso)],
+        ["Vida útil (meses)", bem.vidaUtilMeses],
+        ["Método de depreciação", bem.metodoDepreciacao],
+        ["Situação atual", bem.situacao],
+        ["Motivo da baixa", bem.motivoBaixa],
+        ["Observações", bem.obs]
+      ];
+
+      const { depMensal, mesesUso, depAcum, valorAtual } = calcularDepreciacao(bem);
+
+      campos.push(["Depreciação mensal", formatCurrencyBRL(depMensal)]);
+      campos.push(["Meses de uso (aprox.)", mesesUso]);
+      campos.push(["Depreciação acumulada", formatCurrencyBRL(depAcum)]);
+      campos.push(["Valor atual estimado", formatCurrencyBRL(valorAtual)]);
+
+      let html = '<div class="detail-grid">';
+      campos.forEach(([label, value]) => {
+        if (value !== null && value !== undefined && String(value).trim() !== "") {
+          html += `
+            <div class="detail-item">
+              <strong>${label}</strong>
+              <span>${value}</span>
+            </div>
+          `;
+        }
+      });
+      html += "</div>";
+
+      bemDetailContent.innerHTML = html;
+
+      bemRespHistorySection.style.display = "none";
+      btnToggleRespHistory.textContent = "👥 Mostrar histórico de responsáveis";
+
+      bemDetailModal.style.display = "flex";
+    }
+
+    function fecharModalDetalheBem() {
+      bemDetailModal.style.display = "none";
+      currentBemModalId = null;
+    }
+
+    function renderHistoricoResponsaveis() {
+      if (!currentBemModalId) return;
+      bemRespHistoryBody.innerHTML = "";
+      const registros = state.movimentacoes.filter(mov =>
+        mov.idBem === currentBemModalId &&
+        (mov.respOrigem || mov.respDestino || (mov.tipoMov && mov.tipoMov.toLowerCase().includes("respons")))
+      );
+
+      if (!registros.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="6">Nenhum registro específico de movimentação de responsáveis para este bem.</td>`;
+        bemRespHistoryBody.appendChild(tr);
+        return;
+      }
+
+      registros.forEach(mov => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${formatDateBRL(mov.dataMov || "")}</td>
+          <td>${mov.tipoMov || ""}</td>
+          <td>${mov.respOrigem || ""}</td>
+          <td>${mov.respDestino || ""}</td>
+          <td>${mov.setorOrigem || ""}</td>
+          <td>${mov.setorDestino || ""}</td>
+        `;
+        bemRespHistoryBody.appendChild(tr);
+      });
+    }
+
+    // ------------------------------
+    // CARREGAR DADOS DO GOOGLE SHEETS
+    // ------------------------------
+    async function loadAllData() {
+      try {
+        const [bensResp, movResp] = await Promise.all([
+          apiCall("getBens", "GET"),
+          apiCall("getMovs", "GET")
+        ]);
+
+        // espero que a API retorne array direto, mas se vier como {bens:[...]} também trato
+        state.bens = Array.isArray(bensResp) ? bensResp : (bensResp.bens || []);
+        state.movimentacoes = Array.isArray(movResp) ? movResp : (movResp.movimentacoes || []);
+
+        renderBensTable();
+        renderMovTable();
+        renderBemOptionsForMov();
+        renderInventarioSnapshot();
+
+        document.getElementById("idMov").value = gerarId("MOV-", state.movimentacoes);
+      } catch (e) {
+        console.error(e);
+        alert("Erro ao carregar dados do servidor. Verifique a API do Google Apps Script.");
+      }
+    }
+
+    // ------------------------------
+    // INICIALIZAÇÃO DO APP (após login)
+    // ------------------------------
+    let appInitialized = false;
+
+    function initApp() {
+      if (appInitialized) return;
+      appInitialized = true;
+
+      // Tabs
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabContents = document.querySelectorAll(".tab-content");
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const targetId = btn.dataset.tab;
+          tabContents.forEach((section) => {
+            section.style.display = section.id === targetId ? "block" : "none";
+          });
+        });
+      });
+
+      // Buscar bens
+      searchBemInput.addEventListener("input", renderBensTable);
+
+      // Novo bem
+      document.getElementById("btnNovoBem").addEventListener("click", () => {
+        limparFormBem();
+        document.getElementById("descricaoBem").focus();
+      });
+
+      // Limpar formulário de bem
+      document.getElementById("btnLimparBem").addEventListener("click", () => {
+        limparFormBem();
+      });
+
+      // Excluir bem
+      document.getElementById("btnExcluirBem").addEventListener("click", async () => {
+        const id = document.getElementById("idBem").value;
+        if (!id) {
+          alert("Nenhum bem selecionado para excluir.");
+          return;
+        }
+        if (!confirm("Tem certeza que deseja excluir o bem " + id + "?")) {
+          return;
+        }
+        try {
+          await apiCall("deleteBem", "POST", { id });
+          await loadAllData();
+          limparFormBem();
+        } catch (e) {
+          console.error(e);
+          alert("Erro ao excluir bem no servidor.");
+        }
+      });
+
+      // Salvar bem
+      document.getElementById("bemForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const bemForm = lerBemDoForm();
+        if (!bemForm.descricao) {
+          alert("Descrição é obrigatória.");
+          return;
+        }
+
+        if (!bemForm.id) {
+          bemForm.id = gerarId("PAT-", state.bens);
+          document.getElementById("idBem").value = bemForm.id;
+        }
+
+        try {
+          await apiCall("saveBem", "POST", bemForm);
+          alert("Bem salvo com sucesso.");
+          await loadAllData();
+          const bemAtual = state.bens.find(b => b.id === bemForm.id);
+          if (bemAtual) preencherFormBem(bemAtual);
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao salvar bem no servidor. Verifique a API.");
+        }
+      });
+
+      // Atualizar campos de depreciação ao mudar dados relevantes
+      ["valorAquisicaoBem", "vidaUtilBem", "dataInicioUsoBem", "dataAquisicaoBem"].forEach((id) => {
+        document.getElementById(id).addEventListener("change", () => {
+          const bemTemp = lerBemDoForm();
+          const { depMensal, mesesUso, depAcum, valorAtual } = calcularDepreciacao(bemTemp);
+          document.getElementById("depMensalBem").value = formatCurrencyBRL(depMensal);
+          document.getElementById("mesesUsoBem").value = mesesUso || 0;
+          document.getElementById("depAcumBem").value = formatCurrencyBRL(depAcum);
+          document.getElementById("valorAtualBem").value = formatCurrencyBRL(valorAtual);
+        });
+      });
+
+      // Registrar movimentação
+      document.getElementById("movForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const dataMov = document.getElementById("dataMov").value;
+        const idBemMov = document.getElementById("bemMov").value;
+
+        if (!dataMov || !idBemMov) {
+          alert("Preencha pelo menos data e bem.");
+          return;
+        }
+
+        const current = getCurrentUser();
+        const mov = {
+          idMov: gerarId("MOV-", state.movimentacoes),
+          dataMov: dataMov,
+          idBem: idBemMov,
+          tipoMov: document.getElementById("tipoMov").value || "",
+          setorOrigem: document.getElementById("setorOrigemMov").value || "",
+          setorDestino: document.getElementById("setorDestinoMov").value || "",
+          respOrigem: document.getElementById("respOrigemMov").value || "",
+          respDestino: document.getElementById("respDestinoMov").value || "",
+          valor: document.getElementById("valorMov").value || "",
+          usuario: document.getElementById("usuarioMov").value || (current ? current.nome || current.email : ""),
+          descricao: document.getElementById("descMov").value || ""
+        };
+
+        try {
+          // salva movimentação
+          await apiCall("addMov", "POST", mov);
+
+          // atualiza dados do bem conforme movimentação
+          const bem = state.bens.find((b) => b.id === mov.idBem);
+          if (bem) {
+            if (mov.setorDestino) bem.setor = mov.setorDestino;
+            if (mov.respDestino) bem.responsavel = mov.respDestino;
+            if (mov.tipoMov && mov.tipoMov.toLowerCase().startsWith("baixa")) {
+              bem.situacao = "Baixado";
+              bem.motivoBaixa = mov.tipoMov;
+            }
+            await apiCall("saveBem", "POST", bem);
+          }
+
+          alert("Movimentação registrada.");
+          document.getElementById("movForm").reset();
+          await loadAllData();
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao registrar movimentação. Verifique a API.");
+        }
+      });
+
+      // Botões de exportação
+      document.getElementById("btnExportBens").addEventListener("click", exportBensCSV);
+      document.getElementById("btnExportMov").addEventListener("click", exportMovCSV);
+
+      // Botão termo na aba de bens
+      document.getElementById("btnTermoBem").addEventListener("click", () => {
+        const id = document.getElementById("idBem").value;
+        if (!id) {
+          alert("Selecione ou salve um bem para gerar o termo.");
+          return;
+        }
+        const bem = state.bens.find(b => String(b.id) === String(id));
+        if (!bem) {
+          alert("Bem não encontrado.");
+          return;
+        }
+        gerarTermoResponsabilidade(bem);
+      });
+
+      // Botão termo na aba de movimentações
+      document.getElementById("btnTermoMov").addEventListener("click", () => {
+        if (!selectedMovId) {
+          alert("Selecione uma movimentação na tabela para gerar o termo.");
+          return;
+        }
+        const mov = state.movimentacoes.find(m => m.idMov === selectedMovId);
+        if (!mov) {
+          alert("Movimentação não encontrada.");
+          return;
+        }
+        const bem = state.bens.find(b => b.id === mov.idBem);
+        if (!bem) {
+          alert("Bem associado à movimentação não encontrado.");
+          return;
+        }
+        gerarTermoResponsabilidade(bem);
+      });
+
+      // Modal detalhe do bem
+      btnCloseBemModal.addEventListener("click", fecharModalDetalheBem);
+      bemDetailModal.addEventListener("click", (e) => {
+        if (e.target === bemDetailModal) fecharModalDetalheBem();
+      });
+
+      btnToggleRespHistory.addEventListener("click", () => {
+        if (!currentBemModalId) return;
+        if (bemRespHistorySection.style.display === "none") {
+          renderHistoricoResponsaveis();
+          bemRespHistorySection.style.display = "block";
+          btnToggleRespHistory.textContent = "👥 Ocultar histórico de responsáveis";
+        } else {
+          bemRespHistorySection.style.display = "none";
+          btnToggleRespHistory.textContent = "👥 Mostrar histórico de responsáveis";
+        }
+      });
+
+      // Logout
+      const btnLogout = document.getElementById("btnLogout");
+      if (btnLogout) {
+        btnLogout.addEventListener("click", () => {
+          if (!confirm("Deseja realmente sair?")) return;
+          clearCurrentUser();
+          document.getElementById("main-app").style.display = "none";
+          document.getElementById("auth-shell").style.display = "flex";
+        });
+      }
+
+      // Carrega dados ao iniciar app
+      loadAllData();
+    }
+
+    function showAuthError(msg) {
+      const el = document.getElementById("auth-alert");
+      el.textContent = msg;
+      el.style.display = msg ? "block" : "none";
+    }
+
+    function showAppForUser(user) {
+      document.getElementById("auth-shell").style.display = "none";
+      document.getElementById("main-app").style.display = "block";
+      const label = document.getElementById("currentUserLabel");
+      if (label) {
+        label.textContent = user.nome || user.email || "Usuário";
+      }
+      initApp();
+      // loadAllData já é chamado dentro do initApp na primeira vez
+    }
+
+    // ------------------------------
+    // AUTENTICAÇÃO (login/cadastro usando API)
+    // ------------------------------
+    document.addEventListener("DOMContentLoaded", () => {
+      const authTabs = document.querySelectorAll(".auth-tab");
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+
+      // alternância entre login e cadastro
+      authTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          authTabs.forEach(t => t.classList.remove("active"));
+          tab.classList.add("active");
+          const tabName = tab.dataset.authTab;
+          showAuthError("");
+          if (tabName === "login") {
+            loginForm.style.display = "flex";
+            registerForm.style.display = "none";
+          } else {
+            loginForm.style.display = "none";
+            registerForm.style.display = "flex";
+          }
+        });
+      });
+
+      // Login
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showAuthError("");
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+        const senha = document.getElementById("loginPassword").value;
+
+        try {
+          const resp = await apiCall("login", "POST", { email, senha });
+          if (resp.erro) {
+            showAuthError(resp.erro);
+            return;
+          }
+          // resp pode ser {id,nome,email} ou {user:{...}}
+          const user = resp.user || resp;
+          const current = { id: user.id, nome: user.nome, email: user.email };
+          setCurrentUser(current);
+          showAppForUser(current);
+        } catch (err) {
+          console.error(err);
+          showAuthError("Erro ao conectar com a API de login.");
+        }
+      });
+
+      // Cadastro
+      registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showAuthError("");
+
+        const nome = document.getElementById("regName").value.trim();
+        const email = document.getElementById("regEmail").value.trim().toLowerCase();
+        const senha = document.getElementById("regPassword").value;
+        const senha2 = document.getElementById("regPassword2").value;
+
+        if (!nome || !email || !senha || !senha2) {
+          showAuthError("Preencha todos os campos.");
+          return;
+        }
+        if (senha.length < 4) {
+          showAuthError("A senha deve ter pelo menos 4 caracteres.");
+          return;
+        }
+        if (senha !== senha2) {
+          showAuthError("As senhas não conferem.");
+          return;
+        }
+
+        try {
+          const resp = await apiCall("register", "POST", { nome, email, senha });
+          if (resp.erro) {
+            showAuthError(resp.erro);
+            return;
+          }
+          // após cadastro, já faz login automático
+          const loginResp = await apiCall("login", "POST", { email, senha });
+          if (loginResp.erro) {
+            showAuthError("Usuário cadastrado, mas erro ao fazer login automático.");
+            return;
+          }
+          const user = loginResp.user || loginResp;
+          const current = { id: user.id, nome: user.nome, email: user.email };
+          setCurrentUser(current);
+          showAppForUser(current);
+        } catch (err) {
+          console.error(err);
+          showAuthError("Erro ao cadastrar usuário na API.");
+        }
+      });
+
+      // Se já existe usuário logado, entra direto
+      const current = getCurrentUser();
+      if (current) {
+        showAppForUser(current);
+      }
+    });
+  </script>
+</body>
+</html>
